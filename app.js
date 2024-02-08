@@ -6,35 +6,33 @@ const cors = require('cors');
 const PORT = 8082;
 app.use(cors());
 const wss = new WebSocket.Server({ server });
+const Kafka = require("node-rdkafka");
 
+const consumer = new Kafka.KafkaConsumer(
+  {
+    "group.id": "kafka",
+    "metadata.broker.list": "localhost:9092",
+  },
+  {}
+);
 
-const messages = ["Message 1", "Message 2", "Message 3", "Message 4"];
+consumer.connect();
 
-function sendRandomMessage(ws) {
-  const randomIndex = Math.floor(Math.random() * messages.length);
-  ws.send(messages[randomIndex]);
-}
-
-wss.on('connection', function connection(ws) {
-  console.log('a new client connected to server');
-  ws.on('error', console.error);
-
-  ws.on('message', function message(data) {
-    console.log('received: %s', data);
+consumer
+  .on("ready", () => {
+    console.log("consumer ready...");
+    consumer.subscribe(["heating"]); //subscribe to topics
+    consumer.consume();
+  })
+  .on("data", (data) => {
+    console.log(`received message: ${data.value}`);
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+      client.send(data.value); // Convert buffer to string before sending
+    }
+    })
+    return data.value;
   });
-
-  ws.send('Welcome client, to WS server');
-
-  // Send a new message every 3 seconds
-  const intervalId = setInterval(() => {
-    sendRandomMessage(ws);
-  }, 3000);
-
-  // Clean up the interval when the client disconnects
-  ws.on('close', () => {
-    clearInterval(intervalId);
-  });
-});
 
 server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
