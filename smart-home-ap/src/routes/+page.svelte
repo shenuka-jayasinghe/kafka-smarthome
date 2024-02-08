@@ -16,7 +16,8 @@
 	  socket.addEventListener('message', event => {
 		const message: string = event.data;
 		console.log("Received message:", message);
-		messages.update(prevMessages => [...prevMessages, message]);
+		//only shows 3 messages at a time
+		messages.update(prevMessages => [...prevMessages.slice(-2), message]);
 	  });
 	});
   </script>

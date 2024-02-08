@@ -7,6 +7,7 @@ const PORT = 8082;
 app.use(cors());
 const wss = new WebSocket.Server({ server });
 
+
 const messages = ["Message 1", "Message 2", "Message 3", "Message 4"];
 
 function sendRandomMessage(ws) {
