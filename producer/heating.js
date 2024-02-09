@@ -1,5 +1,8 @@
 console.log('producer...')
 const Kafka = require('node-rdkafka');
+const { genTemp, timeString } = require('../utils/utils');
+const eventType = require('./eventType')
+
 
 const stream = Kafka.Producer.createWriteStream({
   'metadata.broker.list': 'localhost:9092'
@@ -9,10 +12,15 @@ const stream = Kafka.Producer.createWriteStream({
 
 function queueMessage() {
   // Generate a different message every 3 seconds
-  const message = `Message ${new Date().getTime()}`;
-  const queuedSuccess = stream.write(Buffer.from(message));
+  // const message = `Message ${new Date().getTime()}`;
+  const temp = genTemp(23);
+  const time = timeString(new Date().getTime())
+  const message = { temp, time }
+  // const queuedSuccess = stream.write(Buffer.from(message));
+  const queuedSuccess = stream.write(eventType.toBuffer(message))
+
   if (queuedSuccess) {
-    console.log(`Queued message: ${message}`);
+    console.log(`Queued message: ${JSON.stringify(message)}`);
   } else {
     console.log('Too many messages in our queue already');
   }
