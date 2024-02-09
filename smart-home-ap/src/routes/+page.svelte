@@ -4,6 +4,7 @@
   
 	// Create a writable store to hold WebSocket messages
 	const messages = writable<string[]>([]);
+
   
 	let socket: WebSocket;
   

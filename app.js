@@ -8,6 +8,8 @@ app.use(cors());
 const wss = new WebSocket.Server({ server });
 const Kafka = require("node-rdkafka");
 
+const { timeString } = require('./utils/timeString');
+
 const consumer = new Kafka.KafkaConsumer(
   {
     "group.id": "kafka",
@@ -25,10 +27,16 @@ consumer
     consumer.consume();
   })
   .on("data", (data) => {
-    console.log(`received message: ${data.value}`);
+    //ideally send the temperature and time for frontend graph. Need to seriliase with Avro
+    const time = timeString(data.timestamp)
+    const tempTime = { 
+        temp: data.value.toString(),
+        time
+     }
+    console.log(`received message: ${JSON.stringify(tempTime)}`);
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
-      client.send(data.value); // Convert buffer to string before sending
+      client.send(data.value.toString()); // Convert buffer to string before sending
     }
     })
     return data.value;
