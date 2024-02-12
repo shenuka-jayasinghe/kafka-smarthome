@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { AppShell, AppBar, AppRail, AppRailAnchor, AppRailTile } from '@skeletonlabs/skeleton';
 
 	// Highlight JS
 	import hljs from 'highlight.js/lib/core';
@@ -29,9 +29,9 @@
 		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">Skeleton</strong>
+				<strong class="text-xl uppercase">Smart Home App</strong>
 			</svelte:fragment>
-			<svelte:fragment slot="trail">
+			<!-- <svelte:fragment slot="trail">
 				<a
 					class="btn btn-sm variant-ghost-surface"
 					href="https://discord.gg/EXqV7W8MtY"
@@ -56,9 +56,10 @@
 				>
 					GitHub
 				</a>
-			</svelte:fragment>
+			</svelte:fragment> -->
 		</AppBar>
 	</svelte:fragment>
 	<!-- Page Route Content -->
 	<slot />
 </AppShell>
+

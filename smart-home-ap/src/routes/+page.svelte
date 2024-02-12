@@ -6,6 +6,7 @@
 	// Create a writable store to hold WebSocket messages
 	const messages = writable<string[]>([]);
 	const temps = writable<number[]>([]);
+	const times = writable<number[]>([]);
 
 	let socket: WebSocket;
 
@@ -23,12 +24,25 @@
 			const parsedMessage = JSON.parse(message);
 			const tempString = parsedMessage.temp
 			const tempNumber = parseFloat(tempString.match(/[\d.]+/g).join(''));
-			temps.update((prevTemps) => [...prevTemps.slice(-9), tempNumber]);
+			const timeString = parsedMessage.time
+			times.update((prevtimes) => [...prevtimes.slice(-5), timeString])
+			temps.update((prevTemps) => [...prevTemps.slice(-5), tempNumber]);
 		});
 	});
 </script>
 
-<h1>Smart Home App</h1>
 
-<Graph tempData={$temps} />
+<div class="container mx-auto my-auto p-4">
+	<div class="card p-4 flex flex-wrap bg-gray-800" id="heating">
+		<Graph tempData={$temps} 
+	times={$times}
+	/>
+	</div>
+</div>
 
+
+<style>
+#heating {
+	background-color: #1F2937;
+}
+</style>
